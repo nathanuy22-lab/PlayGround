@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>MAGI SYSTEM // NERV — Offline Terminal + India Map</title>
+<meta name="description" content="Neon Genesis inspired offline MAGI terminal. Ask questions, get 3-core verdicts, browse an offline vector map of India. No network required after first load.">
+<meta name="theme-color" content="#050505">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MAGI">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="grid-bg" aria-hidden="true"></div>
+
+<!-- BOOT OVERLAY -->
+<div id="boot" role="status" aria-label="MAGI boot sequence">
+  <div class="boot-box">
+    <div class="boot-leaf">NERV</div>
+    <h1>MAGI SYSTEM</h1>
+    <p class="boot-sub">SUPERUSER EXCLUSIVE // INTERNAL USE ONLY</p>
+    <pre id="bootLog" class="boot-log"></pre>
+    <button id="bootEnter" class="hex-btn" hidden>▶ ENTER MAGI TERMINAL</button>
+  </div>
+</div>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="leaf" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 2 L24 14 L36 14 L26 21 L30 33 L20 25 L10 33 L14 21 L4 14 L16 14 Z" fill="none" stroke="#ff6a00" stroke-width="2"/><text x="20" y="22" text-anchor="middle" font-size="9" fill="#ff6a00" font-family="monospace">NERV</text></svg>
+    <div>
+      <div class="brand-title">NERV // MAGI SYSTEM</div>
+      <div class="brand-sub">MELCHIOR-1 · BALTHASAR-2 · CASPER-3 — <span id="netBadge" class="net online">● ONLINE (local-first, works offline)</span></div>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="terminal" role="tab" aria-selected="true">◈ MAGI TERMINAL</button>
+    <button class="tab" data-tab="map" role="tab" aria-selected="false">◈ WORLD MAP <span class="pill">OFFLINE</span></button>
+    <button class="tab" data-tab="database" role="tab" aria-selected="false">◈ DATABASE</button>
+    <button class="tab" data-tab="system" role="tab" aria-selected="false">◈ SYSTEM</button>
+  </nav>
+</header>
+
+<main>
+  <!-- TERMINAL -->
+  <section id="tab-terminal" class="panel active" role="tabpanel">
+    <div class="magi-cores">
+      <div class="core" id="core1"><div class="core-name">MELCHIOR-1</div><div class="core-role">SCIENTIST</div><div class="core-vote">— STANDBY —</div><div class="core-bar"><i></i></div></div>
+      <div class="core" id="core2"><div class="core-name">BALTHASAR-2</div><div class="core-role">MOTHER</div><div class="core-vote">— STANDBY —</div><div class="core-bar"><i></i></div></div>
+      <div class="core" id="core3"><div class="core-name">CASPER-3</div><div class="core-role">WOMAN</div><div class="core-vote">— STANDBY —</div><div class="core-bar"><i></i></div></div>
+    </div>
+
+    <div id="verdictStrip" class="verdict hidden">
+      <span id="verdictText">AWAITING QUERY</span>
+    </div>
+
+    <div id="chatLog" class="chat" aria-live="polite"></div>
+
+    <div class="suggest-row" id="suggestRow"></div>
+
+    <form id="askForm" class="askbar" autocomplete="off">
+      <span class="prompt">MAGI&gt;</span>
+      <input id="askInput" type="text" placeholder='Ask MAGI… e.g. "capital of India", "distance Delhi to Mumbai", "where is Kochi", "12*8+5", "who built MAGI"' maxlength="500" aria-label="Ask MAGI">
+      <button type="submit" class="hex-btn">EXECUTE</button>
+    </form>
+    <p class="hint">100% offline: all answers computed on-device. No query ever leaves this terminal. Try <b>help</b>.</p>
+  </section>
+
+  <!-- MAP -->
+  <section id="tab-map" class="panel" role="tabpanel">
+    <div class="map-toolbar">
+      <input id="mapSearch" type="search" placeholder="Search city / country… e.g. Tokyo, Brazil, Leh, Sydney" aria-label="Search map">
+      <button id="mapGo" class="hex-btn small">LOCATE</button>
+      <button id="zoomIn" class="hex-btn small" title="Zoom in">＋</button>
+      <button id="zoomOut" class="hex-btn small" title="Zoom out">－</button>
+      <button id="mapReset" class="hex-btn small">RESET</button>
+      <select id="routeA" aria-label="Route origin"></select>
+      <select id="routeB" aria-label="Route destination"></select>
+      <button id="routeGo" class="hex-btn small">ROUTE</button>
+    </div>
+    <div class="map-toolbar sub">
+      <div class="seg" role="group" aria-label="Map mode">
+        <button id="modeVector" class="hex-btn small active">VECTOR · OFFLINE</button>
+        <button id="modeStreet" class="hex-btn small">STREET · ROADS+BUILDINGS</button>
+      </div>
+      <input id="dlPlace" type="search" placeholder="Offline area: city… e.g. Jaipur" aria-label="Offline area place">
+      <select id="dlRadius" aria-label="Offline area radius">
+        <option value="8">±8 km</option>
+        <option value="15" selected>±15 km</option>
+        <option value="30">±30 km</option>
+      </select>
+      <button id="dlGo" class="hex-btn small">⬇ SAVE OFFLINE</button>
+      <span id="dlProg" class="dl-prog"></span>
+      <select id="dlSaved" aria-label="Saved offline areas"></select>
+      <button id="dlDel" class="hex-btn small ghost">DELETE</button>
+    </div>
+    <div id="attrLine" class="attr" hidden></div>
+    <div class="map-wrap">
+      <canvas id="indiaMap" width="1200" height="640" aria-label="Offline accurate vector map of the world with India highlighted"></canvas>
+      <div id="mapTip" class="map-tip" hidden></div>
+    </div>
+    <div class="map-meta">
+      <div id="mapInfo" class="map-info">Click a country or city marker. Search to zoom. Drag to pan · wheel / buttons to zoom.</div>
+      <div id="routeInfo" class="route-info"></div>
+      <p class="disclaimer">OFFLINE WORLD VECTOR MAP — real country boundaries (180 countries, simplified to 2-decimal precision for on-device use) with India highlighted. Not for navigation or survey use. Cities plotted by true lat/lng. Distances are haversine (great-circle).</p>
+    </div>
+  </section>
+
+  <!-- DATABASE -->
+  <section id="tab-database" class="panel" role="tabpanel">
+    <h2>◈ BUNDLED OFFLINE DATABASE</h2>
+    <p>Everything below ships with the app and is searchable without network.</p>
+    <div class="db-stats" id="dbStats"></div>
+    <input id="dbSearch" type="search" placeholder="Filter knowledge base…">
+    <div id="dbList" class="db-list"></div>
+  </section>
+
+  <!-- SYSTEM -->
+  <section id="tab-system" class="panel" role="tabpanel">
+    <h2>◈ SYSTEM STATUS</h2>
+    <div class="sys-grid">
+      <div class="sys-card"><h3>POWER</h3><p id="sysNet">—</p><p>Service Worker: <b id="sysSW">checking…</b></p><p>Persistence: <b id="sysStore">localStorage</b></p></div>
+      <div class="sys-card"><h3>MAGI CORES</h3><p>3/3 NOMINAL · hybrid engine v2 (frontier AI online, heuristics offline)</p><p>Knowledge entries: <b id="sysKB">—</b></p><p>Cities: <b id="sysCities">—</b> · States/UTs: <b id="sysStates">—</b></p></div>
+      <div class="sys-card"><h3>OFFLINE TEST</h3><p>Disconnect Wi-Fi / enable airplane mode, then reload. The terminal and map keep working.</p><button id="cacheBtn" class="hex-btn small">CACHE FOR OFFLINE NOW</button> <button id="wipeBtn" class="hex-btn small ghost">CLEAR CHAT LOG</button></div>
+      <div class="sys-card install-card"><h3>▣ INSTALL ON PHONE</h3><p id="installStatus">Checking install support…</p><button id="installBtn" class="hex-btn small" hidden>▣ INSTALL MAGI APP</button>
+        <p class="install-steps"><b>Android (Chrome):</b> tap ⋮ → “Add to Home screen” or “Install app”.<br><b>iPhone (Safari):</b> tap Share → “Add to Home Screen”.<br>Then it launches fullscreen and works offline.</p></div>
+      <div class="sys-card cores-card"><h3>◈ EXTERNAL CORES — ANSWER ANYTHING</h3>
+        <p>All 3 cores are pre-wired to a <b>FREE AI bridge</b> — just ask anything when online, no setup. Optional: add premium keys below (Claude / GPT / Gemini) for top-tier answers. Offline → the on-device bundle takes over. Queries sent online go to the bridge/provider you configured. Note: the free tier shares quota — at busy times a core shows LOCAL fallback instead; premium keys give full 3-core power, always.</p>
+        <div id="coreSettings"></div>
+        <button id="wipeKeys" class="hex-btn small ghost">WIPE ALL KEYS</button>
+        <p class="install-steps">Get keys: <b>Claude</b> → console.anthropic.com · <b>GPT</b> → platform.openai.com → API keys · <b>Gemini</b> → aistudio.google.com → Get API key. Usage may bill to your provider accounts.</p></div>
+    </div>
+    <h2>◈ FIELD MANUAL</h2>
+    <pre class="manual">MAGI QUERY TYPES (all offline):
+  • facts      → "capital of india" "population of india" "currency of india"
+  • states     → "capital of kerala" "list states" "info on tamil nadu"
+  • cities     → "where is leh" "cities in rajasthan"
+  • distance   → "distance delhi to mumbai" "how far is chennai from kolkata"
+  • math       → "12*8+5" "sqrt(144)" "15% of 240"
+  • unit       → "convert 100 km to miles" "32 c to f"
+  • time       → "time" "date" "day"
+  • lore       → "who built magi" "what is nerv" "what is at field"
+  • system     → "help" "status" "offline?"
+  • anything   → just ask! cores answer ANY topic online (free bridge, no setup)
+
+MAP CONTROLS: drag pan · wheel zoom · click country for dossier · click marker for city · ROUTE for great-circle link.
+STREET MODE: OSM roads + buildings, viewed areas cached offline · SAVE OFFLINE: keep ±8/15/30 km around any city · MAGI: "download map of Jaipur".
+</pre>
+  </section>
+</main>
+
+<footer>
+  <span>© NERV HQ — MAGI SUPERUSER TERMINAL · OFFLINE BUILD 1.2 WORLD · PATTERN: ORANGE (nominal)</span>
+  <span id="clock">--:--:--</span>
+</footer>
+
+<script src="magi.js"></script>
+<script src="map.js"></script>
+<script src="cores.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
