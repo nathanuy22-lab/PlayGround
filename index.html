@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NEON GENESIS EVANGELION: EVA COMBAT PROTOCOL</title>
+<link rel="icon" href="data:," />
+<link rel="stylesheet" href="styles.css" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+  }
+}
+</script>
+</head>
+<body>
+<div id="game-root"></div>
+
+<!-- BOOT / TITLE -->
+<div id="screen-title" class="screen active">
+  <div class="scanlines"></div>
+  <div class="title-inner">
+    <div class="nerv-logo">NERV</div>
+    <h1 class="game-title">NEON GENESIS<br/><span>EVANGELION</span></h1>
+    <div class="subtitle">EVA COMBAT PROTOCOL // TOKYO-3 DEFENSE</div>
+    <div class="title-warning">⚠ TOP SECRET — NERV EYES ONLY ⚠</div>
+    <button id="btn-start" class="btn-big">▶ INITIATE NERV PROTOCOL</button>
+    <div class="controls-hint">
+      <b>DESKTOP CONTROLS:</b> WASD move · MOUSE aim · SHIFT sprint · <b>J</b> Punch · <b>K (hold)</b> A.T. Field ·
+      <b>L</b> Roar · <b>E</b> Grab Rifle · <b>F / Click</b> Fire · <b>SPACE</b> Jump/Dash
+    </div>
+  </div>
+</div>
+
+<!-- EVA SELECT -->
+<div id="screen-select" class="screen">
+  <div class="scanlines"></div>
+  <div class="select-inner">
+    <div class="sec-header">NERV // EVANGELION SELECT — CHOOSE YOUR UNIT</div>
+    <div class="eva-cards">
+      <div class="eva-card" data-eva="0">
+        <div class="eva-swatch sw-0"></div>
+        <h2>EVA-00 <span class="proto">PROTO</span></h2>
+        <div class="pilot">Pilot: REI AYANAMI</div>
+        <div class="stat"><label>AT FIELD</label><div class="bar"><i style="width:95%"></i></div></div>
+        <div class="stat"><label>POWER</label><div class="bar"><i style="width:65%"></i></div></div>
+        <div class="stat"><label>SPEED</label><div class="bar"><i style="width:60%"></i></div></div>
+        <p class="desc">Prototype. Amber armor. Strongest A.T. Field, weaker melee. Steady sync.</p>
+        <button class="btn-select" data-eva="0">SELECT EVA-00</button>
+      </div>
+      <div class="eva-card featured" data-eva="1">
+        <div class="eva-swatch sw-1"></div>
+        <h2>EVA-01 <span class="test">TEST</span></h2>
+        <div class="pilot">Pilot: SHINJI IKARI</div>
+        <div class="stat"><label>AT FIELD</label><div class="bar"><i style="width:75%"></i></div></div>
+        <div class="stat"><label>POWER</label><div class="bar"><i style="width:80%"></i></div></div>
+        <div class="stat"><label>SPEED</label><div class="bar"><i style="width:75%"></i></div></div>
+        <p class="desc">Test type. Purple/green. Berserk ROAR. Balanced soul resonance.</p>
+        <button class="btn-select" data-eva="1">SELECT EVA-01</button>
+      </div>
+      <div class="eva-card" data-eva="2">
+        <div class="eva-swatch sw-2"></div>
+        <h2>EVA-02 <span class="prod">PROD</span></h2>
+        <div class="pilot">Pilot: ASUKA L. SORYU</div>
+        <div class="stat"><label>AT FIELD</label><div class="bar"><i style="width:65%"></i></div></div>
+        <div class="stat"><label>POWER</label><div class="bar"><i style="width:95%"></i></div></div>
+        <div class="stat"><label>SPEED</label><div class="bar"><i style="width:90%"></i></div></div>
+        <p class="desc">Production. Crimson. Devastating punches & speed. Fragile AT Field.</p>
+        <button class="btn-select" data-eva="2">SELECT EVA-02</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ENTRY SEQUENCE -->
+<div id="screen-entry" class="screen">
+  <div class="lcl-fill"></div>
+  <div class="scanlines"></div>
+  <div class="entry-inner">
+    <div class="entry-log" id="entry-log"></div>
+    <h2 id="entry-phase">ENTRY PLUG INSERTION</h2>
+    <div class="entry-bar-wrap"><div id="entry-bar"></div></div>
+    <div id="entry-sync">SYNC RATIO: 0.00%</div>
+    <button id="btn-launch" class="btn-big hidden">⚡ LAUNCH !!</button>
+    <button id="btn-skip-entry" class="btn-ghost">SKIP SEQUENCE ≫</button>
+  </div>
+</div>
+
+<!-- BRIEFING -->
+<div id="screen-brief" class="screen">
+  <div class="scanlines"></div>
+  <div class="brief-inner">
+    <div class="sec-header red">⚠ EMERGENCY — ANGEL APPROACHING ⚠</div>
+    <div id="brief-body"></div>
+    <button id="btn-deploy" class="btn-big">DEPLOY TO SURFACE</button>
+  </div>
+</div>
+
+<!-- HUD -->
+<div id="hud" class="hidden">
+  <div id="hud-top">
+    <div id="hud-left">
+      <div id="hud-eva-name">EVA-01</div>
+      <div class="hud-row"><label>HP / ARMOR</label><div class="hud-bar hp"><i id="bar-hp"></i></div></div>
+      <div class="hud-row"><label>AT ENERGY</label><div class="hud-bar at"><i id="bar-at"></i></div></div>
+      <div class="hud-row"><label>SYNC</label><div class="hud-bar sync"><i id="bar-sync"></i></div></div>
+      <div id="hud-ammo">PALLET RIFLE: <span id="ammo-count">—</span> <span id="has-gun"></span></div>
+    </div>
+    <div id="hud-center">
+      <div id="angel-name">?? ANGEL ??</div>
+      <div class="hud-bar angel"><i id="bar-angel"></i></div>
+      <div id="wave-label">WAVE 1 / 9</div>
+      <div id="crosshair">＋</div>
+    </div>
+    <div id="hud-right">
+      <div id="timer">BATTERY ∞</div>
+      <div id="kill-log"></div>
+    </div>
+  </div>
+  <div id="hud-bottom">
+    <div class="ability" id="ab-punch"><b>J</b><span>PUNCH</span><i class="cd"></i></div>
+    <div class="ability" id="ab-at"><b>K</b><span>A.T. FIELD</span><i class="cd"></i></div>
+    <div class="ability" id="ab-roar"><b>L</b><span>ROAR</span><i class="cd"></i></div>
+    <div class="ability" id="ab-gun"><b>E/F</b><span>RIFLE</span><i class="cd"></i></div>
+    <div class="ability"><b>WASD</b><span>MOVE</span></div>
+  </div>
+  <div id="hud-msg"></div>
+  <div id="dmg-vignette"></div>
+  <div id="berserk-banner" class="hidden">⚡ BERSERK ⚡</div>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result" class="screen">
+  <div class="scanlines"></div>
+  <div class="brief-inner">
+    <div id="result-title">ANGEL DEFEATED</div>
+    <div id="result-body"></div>
+    <div class="result-btns">
+      <button id="btn-next" class="btn-big">NEXT ANGEL ≫</button>
+      <button id="btn-retry" class="btn-ghost hidden">↻ RETRY (RESTORE HP)</button>
+    </div>
+  </div>
+</div>
+
+<!-- GAME CLEAR -->
+<div id="screen-clear" class="screen">
+  <div class="scanlines"></div>
+  <div class="brief-inner">
+    <div id="clear-title">🎉 ALL ANGELS DEFEATED 🎉</div>
+    <p>HUMAN INSTRUMENTALITY AVERTED. TOKYO-3 IS SAFE.<br/>NERV thanks you, Pilot.</p>
+    <div id="clear-stats"></div>
+    <button id="btn-restart" class="btn-big">↻ PILOT AGAIN</button>
+  </div>
+</div>
+
+<div id="loading">INITIALIZING MAGI SYSTEM…</div>
+
+<script type="module" src="main.js?v=7"></script>
+</body>
+</html>

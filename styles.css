@@ -1,0 +1,97 @@
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--nerv:#ff5a00;--amber:#ffb300;--bg:#05060a;--panel:rgba(10,12,20,.92);--green:#39ff6a;--red:#ff2b2b;--cyan:#35f1ff}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:#f2f2f2;font-family:"Courier New",Consolas,monospace;user-select:none}
+#game-root,#game-root canvas{position:fixed;inset:0;width:100%!important;height:100%!important;display:block}
+.screen{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:20;background:radial-gradient(ellipse at center,rgba(20,8,0,.88),rgba(0,0,0,.97));backdrop-filter:blur(2px)}
+.screen.active{display:flex}
+.scanlines{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px);z-index:1}
+.hidden{display:none!important}
+.btn-big{background:linear-gradient(180deg,#ff7a1a,#c33d00);border:2px solid #ffd9a0;color:#fff;font-weight:bold;font-size:18px;letter-spacing:2px;padding:14px 34px;cursor:pointer;border-radius:4px;text-shadow:0 2px 4px #000;box-shadow:0 0 24px rgba(255,90,0,.6)}
+.btn-big:hover{filter:brightness(1.2);transform:scale(1.03)}
+.btn-ghost{background:transparent;border:1px solid #888;color:#bbb;padding:10px 22px;cursor:pointer;letter-spacing:1px;margin-top:12px}
+.btn-ghost:hover{border-color:#fff;color:#fff}
+/* TITLE */
+.title-inner{position:relative;z-index:2;text-align:center;max-width:760px;padding:20px}
+.nerv-logo{display:inline-block;background:#000;color:var(--nerv);font-size:44px;font-weight:900;letter-spacing:6px;border:3px solid var(--nerv);padding:4px 22px;transform:skewX(-8deg)}
+.game-title{font-size:64px;line-height:.95;margin:18px 0 6px;letter-spacing:4px;text-shadow:0 0 30px rgba(255,90,0,.8)}
+.game-title span{color:var(--nerv)}
+.subtitle{letter-spacing:5px;color:var(--amber);margin-bottom:12px}
+.title-warning{border:1px solid var(--red);color:var(--red);display:inline-block;padding:6px 16px;margin-bottom:20px;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.35}}
+.controls-hint{margin-top:18px;font-size:13px;color:#aaa;line-height:1.7;background:rgba(255,255,255,.05);padding:10px;border:1px solid #333}
+.controls-hint b{color:var(--cyan)}
+/* SELECT */
+.select-inner{position:relative;z-index:2;width:min(1100px,94vw)}
+.sec-header{background:#000;border-left:8px solid var(--nerv);padding:10px 16px;letter-spacing:3px;font-weight:bold;color:var(--amber);margin-bottom:16px;font-size:18px}
+.sec-header.red{border-color:var(--red);color:#ff7777;animation:blink 1.2s infinite}
+.eva-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.eva-card{background:var(--panel);border:1px solid #444;padding:16px;text-align:center;transition:.2s}
+.eva-card:hover,.eva-card.featured{border-color:var(--nerv);box-shadow:0 0 24px rgba(255,90,0,.35)}
+.eva-card h2{letter-spacing:2px;margin:8px 0 2px}
+.eva-card h2 span{font-size:11px;background:#333;padding:2px 6px;vertical-align:middle;border-radius:3px}
+.test{background:#6a1fb3!important}.prod{background:#b31f1f!important}.proto{background:#8a7a00!important}
+.pilot{color:var(--cyan);font-size:13px;margin-bottom:10px;letter-spacing:1px}
+.eva-swatch{height:90px;border:1px solid #555}
+.sw-0{background:linear-gradient(135deg,#E8A200 40%,#9AA2AC 40% 60%,#E8A200 60%)}
+.sw-1{background:linear-gradient(135deg,#7A30D8 45%,#27E427 45% 55%,#7A30D8 55%)}
+.sw-2{background:linear-gradient(135deg,#D62B1F 50%,#FF8A1F 50%)}
+.stat{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:12px}
+.stat label{width:70px;text-align:right;color:#999}
+.stat .bar{flex:1;height:10px;background:#222;border:1px solid #444}
+.stat .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--nerv),var(--amber))}
+.desc{font-size:12px;color:#bbb;margin:10px 0;min-height:48px;line-height:1.5}
+.btn-select{background:#111;border:1px solid var(--nerv);color:var(--amber);padding:10px;width:100%;cursor:pointer;letter-spacing:2px;font-weight:bold}
+.btn-select:hover{background:var(--nerv);color:#fff}
+/* ENTRY */
+#screen-entry{background:#000}
+.lcl-fill{position:absolute;left:0;bottom:0;width:100%;height:0%;background:linear-gradient(180deg,rgba(255,120,0,.55),rgba(120,40,0,.85));transition:height .3s;z-index:0}
+.entry-inner{position:relative;z-index:2;text-align:center;width:min(700px,92vw)}
+.entry-log{text-align:left;background:rgba(0,0,0,.8);border:1px solid var(--nerv);height:220px;overflow:hidden;padding:12px;font-size:13px;line-height:1.7;color:#ffb36a;margin-bottom:14px}
+#entry-phase{letter-spacing:4px;color:var(--amber);margin-bottom:10px;font-size:22px}
+.entry-bar-wrap{height:16px;background:#111;border:1px solid var(--nerv);margin-bottom:8px}
+#entry-bar{height:100%;width:0%;background:linear-gradient(90deg,#ff5a00,#ffe600);box-shadow:0 0 16px #ff5a00}
+#entry-sync{color:var(--green);letter-spacing:2px;margin-bottom:12px}
+#btn-launch{animation:blink .7s infinite}
+/* BRIEF */
+.brief-inner{position:relative;z-index:2;width:min(680px,92vw);background:var(--panel);border:2px solid var(--red);padding:24px}
+#brief-body{line-height:1.8;font-size:15px;margin:12px 0 18px;color:#ffd9a0}
+#brief-body .angel-big{font-size:30px;letter-spacing:3px;color:#fff}
+.angel-ability{border:1px solid #555;background:rgba(255,0,0,.08);padding:8px;margin:6px 0;font-size:13px}
+/* HUD */
+#hud{position:fixed;inset:0;z-index:10;pointer-events:none}
+#hud-top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;padding:12px;gap:12px}
+#hud-left,#hud-right{background:rgba(0,0,0,.65);border:1px solid var(--nerv);padding:10px;min-width:250px}
+#hud-eva-name{color:var(--amber);font-weight:bold;letter-spacing:2px;margin-bottom:6px}
+.hud-row{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:11px}
+.hud-row label{width:80px;color:#999}
+.hud-bar{flex:1;height:12px;background:#111;border:1px solid #555}
+.hud-bar i{display:block;height:100%;width:100%;transition:width .2s}
+.hp i{background:linear-gradient(90deg,#00e676,#b6ff5a)}
+.at i{background:linear-gradient(90deg,#35f1ff,#7a5cff)}
+.sync i{background:linear-gradient(90deg,#ff5a00,#ffe600)}
+.angel i{background:linear-gradient(90deg,#ff0055,#ff5a00)}
+#hud-center{text-align:center;flex:1}
+#angel-name{font-size:22px;letter-spacing:4px;color:#ff8080;text-shadow:0 0 12px red}
+.hud-bar.angel{height:14px;margin:6px auto;max-width:480px;border-color:var(--red)}
+#wave-label{color:var(--amber);letter-spacing:3px;font-size:13px}
+#crosshair{font-size:28px;color:rgba(0,255,200,.85);margin-top:32vh;text-shadow:0 0 8px #000}
+#timer{color:var(--green);letter-spacing:2px}
+#kill-log{font-size:12px;color:#aaa;margin-top:8px;line-height:1.6}
+#hud-ammo{margin-top:6px;font-size:12px;color:var(--cyan)}
+#hud-bottom{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:10px}
+.ability{position:relative;background:rgba(0,0,0,.7);border:1px solid var(--cyan);min-width:92px;text-align:center;padding:8px 6px;overflow:hidden}
+.ability b{display:block;font-size:18px;color:var(--cyan)}
+.ability span{font-size:11px;letter-spacing:1px}
+.ability.active{border-color:#fff;box-shadow:0 0 14px var(--cyan)}
+.ability .cd{position:absolute;left:0;bottom:0;height:4px;width:0%;background:var(--amber);display:block}
+#hud-msg{position:absolute;top:22%;width:100%;text-align:center;font-size:26px;letter-spacing:4px;color:#fff;text-shadow:0 0 18px var(--nerv),0 2px 2px #000}
+#dmg-vignette{position:absolute;inset:0;box-shadow:inset 0 0 120px rgba(255,0,0,0);transition:.15s}
+#dmg-vignette.hit{box-shadow:inset 0 0 160px rgba(255,0,0,.85)}
+#berserk-banner{position:absolute;top:34%;width:100%;text-align:center;font-size:54px;color:#ff0;letter-spacing:8px;text-shadow:0 0 30px red;animation:blink .4s infinite}
+/* RESULT */
+#result-title{font-size:34px;letter-spacing:4px;margin-bottom:10px}
+#result-body{line-height:1.8;color:#ffd9a0;margin-bottom:16px}
+.result-btns{display:flex;gap:12px;flex-wrap:wrap}
+#clear-title{font-size:30px;color:var(--green);letter-spacing:3px;margin-bottom:12px}
+#loading{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:50;background:#000;color:var(--amber);letter-spacing:4px}
+@media(max-width:900px){.eva-cards{grid-template-columns:1fr}.game-title{font-size:40px}}
